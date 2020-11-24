@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "snowpack dev",
+    "start": "npm run build:css && snowpack dev",
+    "build:css" : "tailwind build node_modules/tailwindcss/tailwind.css -o src/index.css",
     "build": "snowpack build",
     "test": "web-test-runner \"src/**/*.test.jsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
@@ -9,8 +10,12 @@
   "dependencies": {
     "@ffmpeg/core": "^0.8.4",
     "@ffmpeg/ffmpeg": "^0.9.5",
+    "autoprefixer": "^10.0.2",
+    "postcss": "^8.1.10",
+    "postcss-cli": "^8.3.0",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "tailwindcss": "^2.0.1"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.0.4",

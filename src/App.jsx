@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+
 const ffmpeg = createFFmpeg({ log: true });
 
 function App() {
@@ -45,12 +44,13 @@ function App() {
   };
 
   return ready ? (
-    <div className="App">
+    <div>
       {video && (
         <video controls width="250" src={URL.createObjectURL(video)}></video>
       )}
       <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
-      <h3> 결과물 </h3>
+      <h3 className="flex justify-center"> 🔻🔻결과물🔻🔻 </h3>
+
       <button onClick={convertToGif}>변환</button>
       {gif && <img src={gif} width="250" />}
     </div>
