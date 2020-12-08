@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "npm run build:css && snowpack dev",
-    "build:css" : "tailwind build node_modules/tailwindcss/tailwind.css -o src/index.css",
+    "start": "yarn build:css && snowpack dev",
+    "build:css": "tailwind build node_modules/tailwindcss/tailwind.css -o src/index.css",
     "build": "snowpack build",
     "test": "web-test-runner \"src/**/*.test.jsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
@@ -13,6 +13,7 @@
     "autoprefixer": "^10.0.2",
     "postcss": "^8.1.10",
     "postcss-cli": "^8.3.0",
+    "rc-slider": "^9.6.5",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "tailwindcss": "^2.0.1"
