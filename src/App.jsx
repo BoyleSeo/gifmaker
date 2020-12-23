@@ -3,7 +3,7 @@ import VideoEditor from './Components/VideoEditor.js';
 
 function App() {
   return (
-    <div className="h-screen flex-col text-center place-items-center bg-gray-400">
+    <div className="flex-col h-screen text-center place-items-center bg-gray-400">
       <VideoEditor />
     </div>
   );

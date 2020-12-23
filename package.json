@@ -16,6 +16,7 @@
     "rc-slider": "^9.6.5",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
+    "react-image-crop": "^8.6.6",
     "tailwindcss": "^2.0.1"
   },
   "devDependencies": {

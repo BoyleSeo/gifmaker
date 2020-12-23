@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import Slider, { Range } from 'rc-slider';
 import VideoViewer from './VideoViewer';
-import 'rc-slider/assets/index.css';
 import vid from '../MediaForTest/in.mp4';
 
 const ffmpeg = createFFmpeg({ log: true });
 
 function VideoEditor() {
   const [ready, setReady] = useState(false);
-  const [video, setVideo] = useState(vid);
+  const [video, setVideo] = useState();
   const [gif, setGif] = useState();
 
   //비동기처리
   const load = async () => {
-    await ffmpeg.load(); //ffmpeg load promise를 받으면 ready를 true로
+    //ffmpeg load promise를 받으면 ready를 true로
+    await ffmpeg.load();
     setReady(true);
   };
 
   useEffect(() => {
     load();
-  }, []); // '[]' ONLY RUN ONCE
+  }, []);
 
-  const convertToGif = async () => {
+  const convertToGif = async (t, ss, crop) => {
     //웹어셈블리의 메모리에 video를 지정한 이름으로 쓰기
-    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
+    ffmpeg.FS('writeFile', 'in.mp4', await fetchFile(video));
 
     //커맨드라인 실행시키듯 (-ss 플래그 : starting second)
     await ffmpeg.run(
       '-i',
-      'test.mp4',
+      'in.mp4',
       '-t',
-      '1',
+      `${t}`,
       '-ss',
-      '0.0',
+      `${ss}`,
+      '-vf',
+      `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y}`,
       '-f',
       'gif',
       'out.gif',
@@ -49,13 +50,9 @@ function VideoEditor() {
     setGif(url);
   };
 
-  //////////////////////////////////
-
   return ready ? (
-    <div className="bg-yellow-600 w-1/2 h-screen m-auto">
-      {video && <VideoViewer video={video} />}
-
-      <label className="bg-green-400 m-10" htmlFor="videoUp">
+    <div className="bg-yellow-600 w-3/4 h-screen m-auto">
+      <label className="bg-green-400 m-auto" htmlFor="videoUp">
         영상 올리기
       </label>
       <input
@@ -63,12 +60,12 @@ function VideoEditor() {
         type="file"
         accept="video/*"
         id="videoUp"
-        onChange={(e) => setVideo(URL.createObjectURL(e.target.files?.item(0)))}
+        onChange={(e) => {
+          setVideo(URL.createObjectURL(e.target.files?.item(0)));
+        }}
       />
 
-      <div className="bg-green-400 m-10" onClick={convertToGif}>
-        🔻변환🔻
-      </div>
+      {video && <VideoViewer video={video} convertToGif={convertToGif} />}
 
       {gif && (
         <div className="m-auto">
