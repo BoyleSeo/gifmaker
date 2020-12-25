@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import VideoViewer from './VideoViewer';
 import vid from '../MediaForTest/in.mp4';
+import giph from '../MediaForTest/giph.gif';
 
 const ffmpeg = createFFmpeg({ log: true });
 
 function VideoEditor() {
   const [ready, setReady] = useState(false);
-  const [video, setVideo] = useState();
-  const [gif, setGif] = useState();
+  const [video, setVideo] = useState(vid);
+  const [gif, setGif] = useState(giph);
 
-  //비동기처리
   const load = async () => {
     //ffmpeg load promise를 받으면 ready를 true로
     await ffmpeg.load();
@@ -51,8 +51,8 @@ function VideoEditor() {
   };
 
   return ready ? (
-    <div className="bg-yellow-600 w-3/4 h-screen m-auto">
-      <label className="bg-green-400 m-auto" htmlFor="videoUp">
+    <div className="bg-yellow-600 h-screen w-screen">
+      <label className="bg-green-400 " htmlFor="videoUp">
         영상 올리기
       </label>
       <input
@@ -68,9 +68,9 @@ function VideoEditor() {
       {video && <VideoViewer video={video} convertToGif={convertToGif} />}
 
       {gif && (
-        <div className="m-auto">
+        <div className="max-w-lg my-10 mx-auto">
           <img src={gif} />
-          <a className="bg-green-400 m-10" href={gif} download="out.gif">
+          <a className="bg-green-400" href={gif} download="out.gif">
             내려받기
           </a>
         </div>

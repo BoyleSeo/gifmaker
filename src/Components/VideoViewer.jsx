@@ -5,13 +5,14 @@ import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 function VideoViewer(props) {
-  const [range, setRange] = useState({ start: 0, end: 100 });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [range, setRange] = useState([0, 0, 100]); //0:start, 1:current, 2:end
   const [info, setInfo] = useState({
     duration: null,
     width: null,
     height: null,
   });
-  const [placeholder, setPlaceholder] = useState();
+  const [croperFrame, setCroperFrame] = useState();
   const [crop, setCrop] = useState({
     unit: '%',
     x: 0,
@@ -25,87 +26,121 @@ function VideoViewer(props) {
   const videoView = useRef();
   const sliderBar = useRef();
 
-  const updateTimeLine = (e) => {
-    setRange({ start: e[0], end: e[1] });
-    //편집점 설정 시 영상currentTime 업데이트
-    videoView.current.currentTime = (info.duration * e[0]) / 100;
+  const onVideoLoaded = (e) => {
+    // let name = e.target.src;
+    setInfo({
+      duration: e.target.duration,
+      // format: name.substring(name.lastIndexOf('.') + 1, name.length), //확장명정보 추가 보류
+      width: e.target.videoWidth,
+      height: e.target.videoHeight,
+    });
+    //편집타임라인 초기화
+    sliderBar.current.setState({ bounds: [0, 0, 100] });
+    createCroperFrame(e);
   };
 
-  //ReactCrop 의 소스로 쓰일 place holder 이미지 생성
-  const createPlaceholder = (e) => {
+  //ReactCrop 의 소스로 쓰일 setCroperFrame 이미지 생성
+  const createCroperFrame = (e) => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
     canvas.height = (1000 * e.target.videoHeight) / e.target.videoWidth;
-
     // const ctx = canvas.getContext('2d');
     // ctx.fillStyle = '#FF0000';
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    console.log(canvas);
     const img = canvas.toDataURL();
-    console.log('createPlaceholder()');
-    setPlaceholder(img);
+    setCroperFrame(img);
   };
-  const playVideo = () => {
-    if (!videoView.current.paused) {
-      videoView.current.pause();
-    } else {
-      videoView.current.play();
+
+  const updateTimelineByVideo = (e) => {
+    // !!! 재생시점 포인터(range[1])와 끝점(ranga[2])이 완전히 겹칠때도 약간의 재생시간이 남아있는 점 해결필요 !!!
+    if (isPlaying) {
+      const boundsCopy = range;
+      const endTime = (boundsCopy[2] / 100) * e.target.duration;
+      boundsCopy[1] = (e.target.currentTime / e.target.duration) * 100;
+      sliderBar.current.setState({ bounds: boundsCopy });
+      if (e.target.currentTime >= endTime) {
+        videoView.current.pause();
+        const startTime = (boundsCopy[0] / 100) * e.target.duration;
+        videoView.current.currentTime = startTime;
+      }
     }
   };
+
+  const onSliderPushed = () => {
+    videoView.current.pause();
+    setIsPlaying(false);
+  };
+
+  const updateTimelineByslider = (e) => {
+    //편집점 설정 시 영상currentTime 업데이트
+    //영상이 일시정지할 때에만 range 업데이트 하도록
+    if (!isPlaying) {
+      if (range[0] !== e[0])
+        videoView.current.currentTime = (info.duration * e[0]) / 100;
+      else if (range[1] !== e[1])
+        videoView.current.currentTime = (info.duration * e[1]) / 100;
+      setRange(e);
+    }
+  };
+
+  const playOrPauseVideo = () => {
+    if (!videoView.current.paused) {
+      videoView.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoView.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const passConversionInfo = () => {
+    const ss = info.duration * (range[0] / 100);
+    const t = info.duration * (range[2] / 100) - ss;
+    const c = {
+      x: (info.width * crop.x) / 100,
+      y: (info.height * crop.y) / 100,
+      w: (info.width * crop.width) / 100,
+      h: (info.height * crop.height) / 100,
+    };
+    props.convertToGif(t, ss, c); //변환 시작
+  };
+
   return (
-    <div>
-      <video
-        className="absolute w-3/4"
-        ref={videoView}
-        src={video}
-        // 영상 메타데이터 기록
-        onLoadedMetadata={(e) => {
-          // let name = e.target.src;
-          setInfo({
-            duration: e.target.duration,
-            // format: name.substring(name.lastIndexOf('.') + 1, name.length),
-            width: e.target.videoWidth,
-            height: e.target.videoHeight,
-          });
-          //편집타임라인 초기화
-          sliderBar.current.setState({ bounds: [0, 100] });
-          createPlaceholder(e);
-        }}
-      />
-      <ReactCrop
-        src={placeholder}
-        ruleOfThirds
-        crop={crop}
-        onChange={(Crop, newCrop) => setCrop(newCrop)}
-      ></ReactCrop>
-      <div>
-        <button className="bg-green-400 m-5" onClick={playVideo}>
+    <div className="max-w-lg mx-auto">
+      <div className="my-10">
+        <ReactCrop
+          className="absolute max-w-lg z-10"
+          src={croperFrame}
+          ruleOfThirds={true}
+          crop={crop}
+          onChange={(crop, newCrop) => setCrop(newCrop)}
+        />
+        <video
+          className="z-0"
+          ref={videoView}
+          src={video}
+          // 영상 메타데이터 기록
+          onLoadedMetadata={onVideoLoaded}
+          onTimeUpdate={updateTimelineByVideo}
+        />
+      </div>
+
+      <div className="flex max-w-lg">
+        <button className="bg-green-400 mx-5" onClick={playOrPauseVideo}>
           Play / pause
         </button>
         <Range
+          className="mx-2 my-auto"
           ref={sliderBar}
-          className="w-3/4 m-auto"
           step={0.1}
-          defaultValue={[0, 100]}
+          count={2}
+          defaultValue={[0, 0, 100]}
           allowCross={false}
-          onChange={updateTimeLine}
+          onBeforeChange={onSliderPushed}
+          onChange={updateTimelineByslider}
         />
-        <div
-          className="bg-green-400 m-20"
-          onClick={() => {
-            const ss = info.duration * (range.start / 100);
-            const t = info.duration * (range.end / 100) - ss;
-            const c = {
-              x: (info.width * crop.x) / 100,
-              y: (info.height * crop.y) / 100,
-              w: (info.width * crop.width) / 100,
-              h: (info.height * crop.height) / 100,
-            };
-            props.convertToGif(t, ss, c);
-          }}
-        >
-          🔻변환🔻
+        <div className="bg-green-400 mx-5" onClick={passConversionInfo}>
+          🔻🔻
         </div>
       </div>
     </div>
