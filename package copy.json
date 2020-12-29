@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "yarn build:css && snowpack dev",
-    "build:css": "postcss src/tailwind.css -o src/index.css",
+    "build:css": "tailwind build node_modules/tailwindcss/tailwind.css -o src/index.css",
     "build": "snowpack build",
     "test": "web-test-runner \"src/**/*.test.jsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import VideoViewer from './VideoViewer';
+import B_Upload from '../img/B_Upload.png';
+import B_Download from '../img/B_Download.png';
+
 import vid from '../MediaForTest/in.mp4';
 import giph from '../MediaForTest/giph.gif';
 
@@ -8,8 +11,9 @@ const ffmpeg = createFFmpeg({ log: true });
 
 function VideoEditor() {
   const [ready, setReady] = useState(false);
-  const [video, setVideo] = useState(vid);
-  const [gif, setGif] = useState(giph);
+  const [video, setVideo] = useState(); //vid
+  const [gif, setGif] = useState(); //giph
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const load = async () => {
     //ffmpeg load promise를 받으면 ready를 true로
@@ -22,6 +26,9 @@ function VideoEditor() {
   }, []);
 
   const convertToGif = async (t, ss, crop) => {
+    setIsProcessing(true);
+    setGif(null);
+
     //웹어셈블리의 메모리에 video를 지정한 이름으로 쓰기
     ffmpeg.FS('writeFile', 'in.mp4', await fetchFile(video));
 
@@ -39,7 +46,7 @@ function VideoEditor() {
       'gif',
       'out.gif',
     );
-
+    setIsProcessing(false);
     // 메모리에서 결과물 읽어들임
     const data = ffmpeg.FS('readFile', 'out.gif');
 
@@ -51,33 +58,36 @@ function VideoEditor() {
   };
 
   return ready ? (
-    <div className="bg-yellow-600 h-screen w-screen">
-      <label className="bg-green-400 " htmlFor="videoUp">
-        영상 올리기
-      </label>
-      <input
-        className="w-0 h-0"
-        type="file"
-        accept="video/*"
-        id="videoUp"
-        onChange={(e) => {
-          setVideo(URL.createObjectURL(e.target.files?.item(0)));
-        }}
-      />
+    <div className="bg-black-custom h-full min-h-screen w-screen">
+      <div className="m-auto w-14 h-10 mt-5">
+        <label htmlFor="videoUp">
+          <img className="w-14" src={B_Upload} />
+        </label>
+        <input
+          className="w-0 h-0"
+          type="file"
+          accept="video/*"
+          id="videoUp"
+          onChange={(e) => {
+            setVideo(URL.createObjectURL(e.target.files?.item(0)));
+          }}
+        />
+      </div>
 
       {video && <VideoViewer video={video} convertToGif={convertToGif} />}
 
+      {isProcessing ? <div className="loader" /> : <div />}
       {gif && (
-        <div className="max-w-lg my-10 mx-auto">
-          <img src={gif} />
-          <a className="bg-green-400" href={gif} download="out.gif">
-            내려받기
+        <div className="max-w-sm mt-10 mx-auto relative">
+          <a href={gif} className="" download="out.gif">
+            <img className="w-14 absolute top-0 right-0" src={B_Download} />
           </a>
+          <img style={{ maxHeight: '50vh' }} src={gif} />
         </div>
       )}
     </div>
   ) : (
-    <p> L O A D I N G . . . </p>
+    <p className="loader top-1/4" />
   );
 }
 export default VideoEditor;

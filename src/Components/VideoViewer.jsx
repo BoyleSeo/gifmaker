@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import B_Play from '../img/B_Play.png';
+import B_Pause from '../img/B_Pause.png';
+import B_Convert from '../img/B_Convert.png';
+import P_Current from '../img/P_Current.png';
+import P_End from '../img/P_End.png';
+import P_Start from '../img/P_Start.png';
 
 function VideoViewer(props) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [pButton, setPButton] = useState(B_Play);
   const [range, setRange] = useState([0, 0, 100]); //0:start, 1:current, 2:end
   const [info, setInfo] = useState({
     duration: null,
@@ -39,7 +46,7 @@ function VideoViewer(props) {
     createCroperFrame(e);
   };
 
-  //ReactCrop 의 소스로 쓰일 setCroperFrame 이미지 생성
+  //ReactCrop 의 소스로 쓰일 CroperFrame 이미지 생성
   const createCroperFrame = (e) => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
@@ -60,24 +67,21 @@ function VideoViewer(props) {
       sliderBar.current.setState({ bounds: boundsCopy });
       if (e.target.currentTime >= endTime) {
         videoView.current.pause();
+        setIsPlaying(false);
+        setPButton(B_Play);
         const startTime = (boundsCopy[0] / 100) * e.target.duration;
         videoView.current.currentTime = startTime;
       }
     }
   };
 
-  const onSliderPushed = () => {
-    videoView.current.pause();
-    setIsPlaying(false);
-  };
-
   const updateTimelineByslider = (e) => {
     //편집점 설정 시 영상currentTime 업데이트
     //영상이 일시정지할 때에만 range 업데이트 하도록
     if (!isPlaying) {
-      if (range[0] !== e[0])
+      if (range[0] !== e[0]) {
         videoView.current.currentTime = (info.duration * e[0]) / 100;
-      else if (range[1] !== e[1])
+      } else if (range[1] !== e[1])
         videoView.current.currentTime = (info.duration * e[1]) / 100;
       setRange(e);
     }
@@ -87,9 +91,11 @@ function VideoViewer(props) {
     if (!videoView.current.paused) {
       videoView.current.pause();
       setIsPlaying(false);
+      setPButton(B_Play);
     } else {
       videoView.current.play();
       setIsPlaying(true);
+      setPButton(B_Pause);
     }
   };
 
@@ -126,21 +132,74 @@ function VideoViewer(props) {
       </div>
 
       <div className="flex max-w-lg">
-        <button className="bg-green-400 mx-5" onClick={playOrPauseVideo}>
-          Play / pause
+        <button className=" mx-0.5 w-20" onClick={playOrPauseVideo}>
+          <img src={pButton} />
         </button>
         <Range
-          className="mx-2 my-auto"
+          className="mx-2 mt-0"
           ref={sliderBar}
-          step={0.1}
+          step={0.01}
           count={2}
           defaultValue={[0, 0, 100]}
+          railStyle={{
+            backgroundColor: 'rgba(32, 31, 30, 1)',
+            borderRadius: '0px',
+            border: 'solid',
+            borderColor: 'rgba(237, 235, 233, 1)',
+            height: '40px',
+          }}
+          trackStyle={[
+            {
+              backgroundColor: 'rgba(237, 235, 233, 1)',
+              border: 'solid',
+              borderRadius: '0px',
+              borderTopColor: 'rgba(32, 31, 30, 1)',
+              borderBottomColor: 'rgba(32, 31, 30, 1)',
+              borderLeftColor: 'magenta',
+              borderRightColor: 'yellow',
+              height: '40px',
+            },
+            {
+              backgroundColor: 'rgba(237, 235, 233, 1)',
+              border: 'solid',
+              borderRadius: '0px',
+              borderTopColor: 'rgba(32, 31, 30, 1)',
+              borderBottomColor: 'rgba(32, 31, 30, 1)',
+              borderLeftColor: 'yellow',
+              borderRightColor: 'cyan',
+              height: '40px',
+            },
+          ]}
+          handleStyle={[
+            {
+              backgroundColor: 'magenta',
+              borderColor: 'rgba(237, 235, 233, 0.5)',
+              zIndex: '1',
+            },
+            {
+              backgroundColor: 'yellow',
+              borderColor: 'rgba(237, 235, 233, 0.5)',
+              zIndex: '0',
+              top: '40px',
+              // backgroundImage: `url(${P_Current})` ,
+            },
+            {
+              backgroundColor: 'cyan',
+              borderColor: 'rgba(237, 235, 233, 0.5)',
+              zIndex: '2',
+            },
+          ]}
+          pushable={false}
           allowCross={false}
-          onBeforeChange={onSliderPushed}
+          onBeforeChange={() => {
+            videoView.current.pause();
+            setIsPlaying(false);
+            setPButton(B_Play);
+          }}
           onChange={updateTimelineByslider}
         />
-        <div className="bg-green-400 mx-5" onClick={passConversionInfo}>
-          🔻🔻
+        <div className="mx-0.5 w-20" onClick={passConversionInfo}>
+          <img src={B_Convert} />
         </div>
       </div>
     </div>
