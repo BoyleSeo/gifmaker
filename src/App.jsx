@@ -4,7 +4,7 @@ import VideoEditor from './Components/VideoEditor.js';
 function App() {
   return (
     <div className="bg-black-custom h-full min-h-screen">
-      <nav className="bg-white-custom px-8 pt-2 shadow-md">
+      <nav className="bg-white-custom px-8 w-screen pt-2 shadow-md">
         <div className="-mb-px flex justify-center">
           <a
             className="no-underline text-black-custom border-b-2 border-transparent uppercase tracking-wide font-bold text-xs py-3 mr-8"

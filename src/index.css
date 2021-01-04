@@ -31167,11 +31167,6 @@ video {
           animation: bounce 1s infinite;
 }
 
-.bg-button-download {
-  --tw-text-opacity: 1;
-  background-image: url('/img/B_Download.png');
-}
-
 .text-black-custom {
   --tw-text-opacity: 1;
   color: rgba(32, 31, 30, var(--tw-bg-opacity));
