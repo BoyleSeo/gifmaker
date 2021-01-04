@@ -3,7 +3,7 @@
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
 GIPHY에 업로드하여 메신져 이모티콘으로 쓸 gif 뱉는 프로그램
-사용 예:
+>사용 예:
 ![demo](https://github.com/BoyleSeo/gifmaker/blob/master/readme/demo.gif)
 ![output](https://github.com/BoyleSeo/gifmaker/blob/master/readme/output.gif)
 
