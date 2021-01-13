@@ -1,0 +1,1 @@
+export default "/_dist_/MediaForTest/giph.gif";

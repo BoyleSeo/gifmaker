@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "@ffmpeg/ffmpeg": "./@ffmpeg/ffmpeg.js",
+    "rc-slider": "./rc-slider.js",
+    "rc-slider/assets/index.css": "./rc-slider/assets/index.css",
+    "react": "./react.js",
+    "react-dom": "./react-dom.js",
+    "react-image-crop": "./react-image-crop.js",
+    "react-image-crop/dist/ReactCrop.css": "./react-image-crop/dist/ReactCrop.css"
+  }
+}

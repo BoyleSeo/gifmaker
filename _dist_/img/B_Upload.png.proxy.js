@@ -1,0 +1,1 @@
+export default "/_dist_/img/B_Upload.png";
