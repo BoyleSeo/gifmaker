@@ -1,0 +1,1 @@
+export default "/dist/img/P_Current.png";
