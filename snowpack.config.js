@@ -2,9 +2,13 @@
 module.exports = {
   mount: {
     public: '/',
-    src: '/gifmaker/_dist_',
+    src: '/_dist_',
   },
-  plugins: ['@snowpack/plugin-react-refresh', '@snowpack/plugin-dotenv'],
+  plugins: [
+    '@snowpack/plugin-react-refresh',
+    '@snowpack/plugin-dotenv',
+    '@snowpack/plugin-webpack',
+  ],
   install: [
     /* ... */
   ],
@@ -15,7 +19,7 @@ module.exports = {
     /* ... */
   },
   buildOptions: {
-    baseUrl: '/gifmaker/',
+    baseUrl: '/gifmaker',
   },
   proxy: {
     /* ... */
