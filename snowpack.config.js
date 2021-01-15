@@ -2,7 +2,7 @@
 module.exports = {
   mount: {
     public: '/',
-    src: '/dist',
+    src: '/gifmaker/_dist_',
   },
   plugins: ['@snowpack/plugin-react-refresh', '@snowpack/plugin-dotenv'],
   install: [

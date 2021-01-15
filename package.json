@@ -5,7 +5,7 @@
   "scripts": {
     "start": "yarn build:css && snowpack dev",
     "build:css": "postcss src/tailwind.css -o src/index.css",
-    "build": "snowpack build && touch build/.nojekyll",
+    "build": "snowpack build",
     "test": "web-test-runner \"src/**/*.test.jsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx}\"",
