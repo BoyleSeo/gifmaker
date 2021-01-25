@@ -2,6 +2,8 @@
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
+https://boyleseo.github.io/gifmaker/
+
 GIPHY에 업로드하여 메신져 이모티콘으로 쓸 gif 뱉는 프로그램 
 gif가 굉장히 비효율적이므로 추후에 직접적인 사용을 위한 다른 영상포맷 지원 예정
 >사용 예:
