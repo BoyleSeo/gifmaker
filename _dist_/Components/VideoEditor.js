@@ -3,8 +3,6 @@ import {createFFmpeg, fetchFile} from "../../web_modules/@ffmpeg/ffmpeg.js";
 import VideoViewer2 from "./VideoViewer.js";
 import B_Upload2 from "../img/B_Upload.png.proxy.js";
 import B_Download2 from "../img/B_Download.png.proxy.js";
-import vid from "../MediaForTest/in.mp4.proxy.js";
-import giph2 from "../MediaForTest/giph.gif.proxy.js";
 const ffmpeg2 = createFFmpeg({log: true});
 function VideoEditor() {
   const [ready, setReady] = useState(false);
