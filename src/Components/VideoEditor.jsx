@@ -4,15 +4,12 @@ import VideoViewer from './VideoViewer';
 import B_Upload from '../img/B_Upload.png';
 import B_Download from '../img/B_Download.png';
 
-import vid from '../MediaForTest/in.mp4';
-import giph from '../MediaForTest/giph.gif';
-
 const ffmpeg = createFFmpeg({ log: true });
 
 function VideoEditor() {
   const [ready, setReady] = useState(false);
-  const [video, setVideo] = useState(); //vid
-  const [gif, setGif] = useState(); //giph
+  const [video, setVideo] = useState();
+  const [gif, setGif] = useState();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const load = async () => {
